@@ -20,9 +20,6 @@
 //
 // No hints this time!
 
-// I AM NOT DONE
-
-
 pub enum Command {
     Uppercase,
     Trim,
@@ -35,10 +32,15 @@ impl Command {
             Command::Trim => return String::from(thestring.trim()),
             Command::Uppercase => return thestring.to_ascii_uppercase(),
             Command::Append(how_many) => {
-                for _ in 0..how_many {
+                //use std::convert::TryFrom;
+                // for _ in 0..usize::try_from(how_many).unwrap(){
+                // for _ in 0..u32::from(newsize){
+                let mut retval: String = thestring.clone();
+                for _ in 0..(*how_many){
                     let suffix = "bar";
-                    return thestring.clone() + &String::from("barbarbarbarbar");
+                    retval = retval  + &String::from(suffix);
                 }
+                retval
             }
         }
     }
