@@ -44,6 +44,15 @@ impl Default for Person {
 
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+        let vec_parts: Vec<_> = s.split("/").collect();
+        // Person{
+        //     name: vec_parts.pop(),
+        //     age: vec_parts.pop(),
+        // }
+        Person {
+            name: String::from("hello"),
+            age: 27,
+        }
     }
 }
 
