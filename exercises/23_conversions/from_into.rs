@@ -46,7 +46,8 @@ impl From<&str> for Person {
     fn from(s: &str) -> Person {
         s.split_once(",")
             .filter(|(name, age)| !name.is_empty())
-            .map(|(name, age)| {
+            .map(|(name, raw_age)| {
+                let age = raw_age.split(",").collect::<Vec<&str>>()[0];
                 age.parse()
                     .map(|age| Person {
                         name: name.into(),
