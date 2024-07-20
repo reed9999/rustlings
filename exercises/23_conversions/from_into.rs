@@ -40,18 +40,27 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of
 // Person Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
-
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
-        let vec_parts: Vec<_> = s.split("/").collect();
-        // Person{
-        //     name: vec_parts.pop(),
-        //     age: vec_parts.pop(),
-        // }
-        Person {
-            name: String::from("hello"),
-            age: 27,
+        let mut vec_parts: Vec<_> = s.split(",").collect();
+        if vec_parts.len() < 2 {
+            vec_parts = vec!["John", "30"];
+        }
+        let (name, age) = match (
+            vec_parts[0], vec_parts[1]
+        ) {
+            ("", "") => ("John", 30),
+            (n, "") => ("John", 30),
+            ("", age_str) => ("John", 30),
+            (n, age_str) => match age_str.parse::<usize>() {
+                Ok(u) => (n, u),
+                ParseIntError => ("John", 30),
+            },
+        };
+
+        Person{
+            name: name.to_string(),
+            age: age,
         }
     }
 }
@@ -108,6 +117,7 @@ mod tests {
     #[test]
     fn test_missing_age() {
         let p: Person = Person::from("Mark,");
+        println!("{}", p.name);
         assert_eq!(p.name, "John");
         assert_eq!(p.age, 30);
     }
