@@ -41,27 +41,21 @@ impl Default for Person {
 // Person Otherwise, then return an instantiated Person object with the results
 
 impl From<&str> for Person {
+    // from https://www.reddit.com/r/learnrust/comments/lqbvpz/comment/hr80u9q/
+    // but fails test_trailing_comma
     fn from(s: &str) -> Person {
-        let mut vec_parts: Vec<_> = s.split(",").collect();
-        if vec_parts.len() < 2 {
-            vec_parts = vec!["John", "30"];
-        }
-        let (name, age) = match (
-            vec_parts[0], vec_parts[1]
-        ) {
-            ("", "") => ("John", 30),
-            (n, "") => ("John", 30),
-            ("", age_str) => ("John", 30),
-            (n, age_str) => match age_str.parse::<usize>() {
-                Ok(u) => (n, u),
-                ParseIntError => ("John", 30),
-            },
-        };
-
-        Person{
-            name: name.to_string(),
-            age: age,
-        }
+        s.split_once(",")
+            .filter(|(name, age)| !name.is_empty())
+            .map(|(name, age)| {
+                age.parse()
+                    .map(|age| Person {
+                        name: name.into(),
+                        age,
+                    })
+                    .ok()
+            })
+            .flatten()
+            .unwrap_or_default()
     }
 }
 
