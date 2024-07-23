@@ -61,10 +61,11 @@ impl FromStr for Person {
                         Err(ParsePersonError::NoName)
                     },
                     Some((name, age_str)) => {
-                        let parse_result = parse_age_str(age_str);
-                        Ok(
-                            Person{name: String::from(name), age: parse_result.ok().unwrap()}
-                        )
+                        match parse_age_str(age_str){
+                            Ok(age) =>
+                                Ok(Person{name: String::from(name), age: age}),
+                            Err(err) => Err(ParsePersonError::ParseInt(err))
+                        }
                     },
                     None => Err(ParsePersonError::BadLen),  // nonsense error
                 }
@@ -74,10 +75,12 @@ impl FromStr for Person {
 
 }
 
+// Could live in the impl of Person or inside of the method that calls it, but organization is
+// beside the point right now.
 fn parse_age_str(s: &str) -> Result<usize, ParseIntError> {
     let parse_result = s.parse();
     match parse_result {
-        Ok(ok) => parse_result,
+        Ok(_) => parse_result,
         Err(err) => Err(err),
     }
 }
