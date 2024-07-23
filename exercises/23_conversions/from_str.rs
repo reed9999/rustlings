@@ -52,33 +52,42 @@ enum ParsePersonError {
 impl FromStr for Person {
     type Err = ParsePersonError;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        fn person_result_from_two_str(
+            name_s: &str,
+            age_s: &str,
+        ) -> Result<Person, ParsePersonError> {
+            match (name_s, age_s) {
+                ("", _) => Err(ParsePersonError::NoName),
+                (name, age_str) => {
+                    // Fake it til you make it -- test the tests!
+                    Ok(Person {
+                        name: String::from("John"),
+                        age: 32,
+                    })
+
+                },
+
+            }
+                // match parse_age_str(age_str){
+                //     Ok(age) =>
+                //         Ok(Person{name: String::from(name), age: age}),
+                //     Err(err) => Err(ParsePersonError::ParseInt(err))
+                // }
+
+        }
         match s {
             "" => Err(ParsePersonError::Empty),
             _ => {
                 let splits: Vec<&str> = s.split(",").collect();
                 match splits.len() {
-                    0 => panic!("We already handled empty but we should move it here."),
+                    0 => panic!("Moving the empty here didn't work. Why not?!"),
                     1 => Err(ParsePersonError::BadLen),
-                    2 => {
-                        Ok(Person{name: String::from("John nothing"), age: 392})
-                    },
-                    _ => Err(ParsePersonError::BadLen)
-
-                    // Some(("", _)) => {
-                    //     Err(ParsePersonError::NoName)
-                    // },
-                    // Some((name, age_str)) => {
-                    //     match parse_age_str(age_str){
-                    //         Ok(age) =>
-                    //             Ok(Person{name: String::from(name), age: age}),
-                    //         Err(err) => Err(ParsePersonError::ParseInt(err))
-                    //     }
-                    // },
+                    2 => person_result_from_two_str("", ""),
+                    _ => Err(ParsePersonError::BadLen),
                 }
             }
         }
     }
-
 }
 
 // Could live in the impl of Person or inside of the method that calls it, but organization is
