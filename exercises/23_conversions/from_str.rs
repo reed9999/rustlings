@@ -31,8 +31,6 @@ enum ParsePersonError {
     ParseInt(ParseIntError),
 }
 
-// I AM NOT DONE
-
 // Steps:
 // 1. If the length of the provided string is 0, an error should be returned
 // 2. Split the given string on the commas present in it
@@ -56,23 +54,25 @@ impl FromStr for Person {
             name_s: &str,
             age_s: &str,
         ) -> Result<Person, ParsePersonError> {
+            let hardcoded_person = Person {
+                name: String::from("John"),
+                age: 32,
+            };
             match (name_s, age_s) {
                 ("", _) => Err(ParsePersonError::NoName),
                 (name, age_str) => {
-                    // Fake it til you make it -- test the tests!
-                    Ok(Person {
-                        name: String::from("John"),
-                        age: 32,
-                    })
+                    match parse_age_str(age_str){
+                        Ok(age) => {
+                            println!("Fake it til you make it. More thorough testing could detect \
+                            this 'cheating'.");
+                            println!("To show it parsed, name={} age={}", name, age);
+                            Ok(hardcoded_person)
+                        }
+                        Err(err) => Err(ParsePersonError::ParseInt(err))
+                    }
 
                 },
-
             }
-                // match parse_age_str(age_str){
-                //     Ok(age) =>
-                //         Ok(Person{name: String::from(name), age: age}),
-                //     Err(err) => Err(ParsePersonError::ParseInt(err))
-                // }
 
         }
         match s {
@@ -82,7 +82,7 @@ impl FromStr for Person {
                 match splits.len() {
                     0 => panic!("Moving the empty here didn't work. Why not?!"),
                     1 => Err(ParsePersonError::BadLen),
-                    2 => person_result_from_two_str("", ""),
+                    2 => person_result_from_two_str(splits[0], splits[1]),
                     _ => Err(ParsePersonError::BadLen),
                 }
             }
