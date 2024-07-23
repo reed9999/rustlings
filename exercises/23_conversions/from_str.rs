@@ -55,19 +55,25 @@ impl FromStr for Person {
         match s {
             "" => Err(ParsePersonError::Empty),
             _ => {
-                let splits = s.split_once(",");
-                match splits {
-                    Some(("", _)) => {
-                        Err(ParsePersonError::NoName)
+                let splits: Vec<&str> = s.split(",").collect();
+                match splits.len() {
+                    0 => panic!("We already handled empty but we should move it here."),
+                    1 => Err(ParsePersonError::BadLen),
+                    2 => {
+                        Ok(Person{name: String::from("John nothing"), age: 392})
                     },
-                    Some((name, age_str)) => {
-                        match parse_age_str(age_str){
-                            Ok(age) =>
-                                Ok(Person{name: String::from(name), age: age}),
-                            Err(err) => Err(ParsePersonError::ParseInt(err))
-                        }
-                    },
-                    None => Err(ParsePersonError::BadLen),  // nonsense error
+                    _ => Err(ParsePersonError::BadLen)
+
+                    // Some(("", _)) => {
+                    //     Err(ParsePersonError::NoName)
+                    // },
+                    // Some((name, age_str)) => {
+                    //     match parse_age_str(age_str){
+                    //         Ok(age) =>
+                    //             Ok(Person{name: String::from(name), age: age}),
+                    //         Err(err) => Err(ParsePersonError::ParseInt(err))
+                    //     }
+                    // },
                 }
             }
         }
